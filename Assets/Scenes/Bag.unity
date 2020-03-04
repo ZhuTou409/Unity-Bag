@@ -124,7 +124,7 @@ GameObject:
   - component: {fileID: 150669388}
   - component: {fileID: 150669387}
   m_Layer: 5
-  m_Name: Slot (2)
+  m_Name: body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -733,7 +733,7 @@ GameObject:
   - component: {fileID: 800648667}
   - component: {fileID: 800648666}
   m_Layer: 5
-  m_Name: Slot
+  m_Name: end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -886,7 +886,7 @@ GameObject:
   - component: {fileID: 891599858}
   - component: {fileID: 891599857}
   m_Layer: 5
-  m_Name: Slot (4)
+  m_Name: mirrors
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1430,7 +1430,7 @@ GameObject:
   - component: {fileID: 1623198105}
   - component: {fileID: 1623198104}
   m_Layer: 5
-  m_Name: Slot (3)
+  m_Name: head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1604,7 +1604,7 @@ GameObject:
   - component: {fileID: 1715668882}
   - component: {fileID: 1715668881}
   m_Layer: 5
-  m_Name: Slot (1)
+  m_Name: magazine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

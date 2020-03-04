@@ -6,18 +6,16 @@ namespace Bag
 {
     public class BagView
     {
-        public List<ViewSlot> m_slots ;
-        //存放当前界面中的item,key是该item所在的槽的位置
-        public Dictionary<int, ViewItem> m_items;
-        private GameObject m_bagList;
+        public List<ViewSlot> m_slots;
 
+        private GameObject m_bagList;
         public GameObject DragSprite;
+
         public int m_slotNum { get; }
         //构造函数
         public BagView()
         {
             m_slots = new List<ViewSlot>();
-            m_items = new Dictionary<int, ViewItem>();
             m_slotNum = 0;
             m_bagList = GameObject.Find("Canvas/Bag/BagList");
             DragSprite = ResManager.Instance.LoadPrefabFromRes("Prefab/DragSprite", true);
@@ -32,7 +30,7 @@ namespace Bag
             {
                 GameObject obj = ResManager.Instance.LoadPrefabFromRes(BagGridPath, true);
                 obj.GetComponent<BagGrIdIns>().id = i;
-                int InstanceID = obj.GetInstanceID();
+                //int InstanceID = obj.GetInstanceID();
                 ViewSlot st = new ViewSlot(obj,i);
                 m_slots.Add(st);
                 m_slots[i].slotObj.transform.SetParent(m_bagList.transform);
@@ -41,23 +39,23 @@ namespace Bag
         }
         
     }
-    public class ViewItem
-    {
-        public Transform number_trans;
-        public GameObject m_obj;
-        public BagItemController itemCtl;
-        public ViewItem(GameObject m_obj, Transform number_trans,BagItemController itemCtl)
-        {
-            this.number_trans = number_trans;
-            this.m_obj = m_obj;
-            this.itemCtl = itemCtl;
-        }
-        public ViewItem()
-        {
-            number_trans = null;
-            m_obj = null;
-        }
-    }
+    //public class ViewItem
+    //{
+    //    public Transform number_trans;
+    //    public GameObject m_obj;
+    //    public BagItemController itemCtl;
+    //    public ViewItem(GameObject m_obj, Transform number_trans,BagItemController itemCtl)
+    //    {
+    //        this.number_trans = number_trans;
+    //        this.m_obj = m_obj;
+    //        this.itemCtl = itemCtl;
+    //    }
+    //    public ViewItem()
+    //    {
+    //        number_trans = null;
+    //        m_obj = null;
+    //    }
+    //}
     public class ViewSlot
     {
         public GameObject slotObj;
@@ -68,13 +66,13 @@ namespace Bag
         {
             slotObj = obj;
             slotID = id;
-            isEmpty = false;
+            isEmpty = true;
         }
         public ViewSlot(GameObject obj)
         {
             slotObj = obj;
             slotID = -1;
-            isEmpty = false;
+            isEmpty = true;
         }
     }
 }

@@ -24,11 +24,9 @@ public class BagItemController : MonoBehaviour, IDragHandler, IBeginDragHandler,
     {
         //获得item的transform
         tf = eventData.pointerCurrentRaycast.gameObject.transform.parent;
-        parentTf = transform.parent;
-        string imgPath  = m_bagCtl.GetItemInfo(id).ImageName;
-        Debug.Log("id:" + this.id);
+        parentTf = transform.parent; 
 
-        Sprite sprite = ResManager.Instance.LoadSpriteFromRes(imgPath);
+        Sprite sprite = m_bagCtl.GetItemInfo(id).Image;
 
         spriteTf = m_bagCtl.GetDragSprite();
         spriteTf.transform.position = eventData.position;
