@@ -107,6 +107,7 @@ namespace Bag
             this.hurtNum = it.hurtNum;
             this.steadyNum = it.steadyNum;
             this.name = it.name;
+            this.ScenePrefabPath = it.ScenePrefabPath;
             //深拷贝
             equipSlots = new Dictionary<int, EquipSlot>();
             List<int> keyList = new List<int>();

@@ -73,6 +73,7 @@ public class AvatarControl : MonoBehaviour
         Debug.Log(Player.name + " 靠近物体: " + other.name);
         EquipInfo info = other.gameObject.GetComponent<EquipInfo>();
         int index = info.equipId;
+        Debug.Log(" equipid: " + index);
         Bag.ItemType type = info.type;
         SendBaseClass send = new PickInfo(index,other.gameObject,type);
         LiteEventManager.Instance.TriggerEvent(CollectKey.Trig, send);

@@ -28,23 +28,23 @@ public class DataBaseManager : MonoBehaviour
         Bag.BaseItem it_6 = new Bag.BaseItem(5, "消音器", "Sprit/xiaoyinqi", 1, Bag.ItemType.equip_muzzle, 5, "减小射击噪音", "Prefab/Weapons/Modular/Silencer_01");
         this.BagItemDic.Add(5, it_6);
         //枪械的gain值作为映射，通过gain值获得GunItemDic中枪械对应的具体值
-        Bag.BaseItem it_7 = new Bag.BaseItem(6, "MK14突击步枪", "Sprit/M416", 1, Bag.ItemType.weapon_gun, 0, "使用5.56mm子弹", "Prefab/Weapons/M416");
+        Bag.BaseItem it_7 = new Bag.BaseItem(6, "MK14突击步枪", "Sprit/M416", 1, Bag.ItemType.weapon_gun, 6, "使用5.56mm子弹", "Prefab/Weapons/Guns/M416");
         this.BagItemDic.Add(6, it_7);
-        Bag.BaseItem it_8 = new Bag.BaseItem(7, "AK47突击步枪", "Sprit/AKM", 1, Bag.ItemType.weapon_gun, 1, "使用7.62mm子弹", "Prefab/Weapons/AKM");
+        Bag.BaseItem it_8 = new Bag.BaseItem(7, "AK47突击步枪", "Sprit/AKM", 1, Bag.ItemType.weapon_gun, 7, "使用7.62mm子弹", "Prefab/Weapons/Guns/AKM");
         this.BagItemDic.Add(7, it_8);
-        Bag.BaseItem it_9 = new Bag.BaseItem(8, "SCAR-L突击步枪", "Sprit/SCAR-L", 1, Bag.ItemType.weapon_gun, 2, "使用5.56mm子弹", "Prefab/Weapons/SCAR-L");
+        Bag.BaseItem it_9 = new Bag.BaseItem(8, "SCAR-L突击步枪", "Sprit/SCAR-L", 1, Bag.ItemType.weapon_gun, 8, "使用5.56mm子弹", "Prefab/Weapons/Guns/SCAR-L");
         this.BagItemDic.Add(8, it_9);
 
         GunItemDic = new Dictionary<int, GunDBItem>();
         //id，名称，子弹类型，子弹容量，伤害数值，稳定系数，配件类型
-        GunItemDic.Add(0, new GunDBItem(0, "MK14 突击步枪", "Sprit/Weapon/WeaponHud/ColtM4", "Prefab/Weapons/M416", BulletType.bullet_556mm, Bag.ItemType.weapon_gun, 30, 30, 0.8f,
+        GunItemDic.Add(6, new GunDBItem(6, "MK14 突击步枪", "Sprit/Weapon/WeaponHud/ColtM4", "Prefab/Weapons/Guns/M416", BulletType.bullet_556mm, Bag.ItemType.weapon_gun, 30, 30, 0.8f,
             new List<Bag.ItemType>() {  Bag.ItemType.equip_butt, Bag.ItemType.equip_magazine
             ,Bag.ItemType.equip_handle,Bag.ItemType.equip_muzzle,Bag.ItemType.equip_scope}));
 
-        GunItemDic.Add(1, new GunDBItem(1, "AK47 突击步枪", "Sprit/Weapon/WeaponHud/Ak47", "Prefab/Weapons/AKM", BulletType.bullet_762mm, Bag.ItemType.weapon_gun, 30, 40, 0.6f,
+        GunItemDic.Add(7, new GunDBItem(7, "AK47 突击步枪", "Sprit/Weapon/WeaponHud/Ak47", "Prefab/Weapons/Guns/AKM", BulletType.bullet_762mm, Bag.ItemType.weapon_gun, 30, 40, 0.6f,
     new List<Bag.ItemType>() {  Bag.ItemType.equip_magazine,Bag.ItemType.equip_muzzle,Bag.ItemType.equip_scope}));
 
-        GunItemDic.Add(2, new GunDBItem(2, "SCAR-L 突击步枪", "Sprit/Weapon/WeaponHud/SciFi", "Prefab/Weapons/SCAR-L", BulletType.bullet_556mm, Bag.ItemType.weapon_gun, 30, 30, 0.8f,
+        GunItemDic.Add(8, new GunDBItem(8, "SCAR-L 突击步枪", "Sprit/Weapon/WeaponHud/SciFi", "Prefab/Weapons/Guns/SCAR-L", BulletType.bullet_556mm, Bag.ItemType.weapon_gun, 30, 30, 0.8f,
     new List<Bag.ItemType>() {  Bag.ItemType.equip_magazine
             ,Bag.ItemType.equip_handle,Bag.ItemType.equip_muzzle,Bag.ItemType.equip_scope}));
     }
@@ -73,7 +73,7 @@ public class DataBaseManager : MonoBehaviour
         public int hurtNum;         //伤害数值
         public float steadyNum;       //稳定系数
         public List<Bag.ItemType> equipList;
-        public GunDBItem(int id, string name, string path, string prefabPath, DataBaseManager.BulletType type, Bag.ItemType weaponType, int bulletCap, int hurtNum,
+        public GunDBItem(int id, string name, string path, string prefabPath, BulletType type, Bag.ItemType weaponType, int bulletCap, int hurtNum,
             float steadyNum, List<Bag.ItemType> equipList)
         {
             this.id = id;
@@ -85,6 +85,7 @@ public class DataBaseManager : MonoBehaviour
             this.steadyNum = steadyNum;
             this.equipList = equipList;
             this.weaponType = weaponType;
+            this.prefabPath = prefabPath;
         }
     }
 

@@ -101,9 +101,10 @@ namespace Bag
                 Debug.Log("没有空位了");
                 GunItem lastItem = m_equipModel.gunItems[slotCount - 1];
                 //将物体放回场景中
+                Debug.Log(lastItem.id);
                 Vector3 pos = AvatarInfoManager.Instance.GetAvatarTransform().position;
-                ResManager.Instance.CreateGameObject(it.prefabPath, 
-                    new Vector3(pos.x, pos.y, pos.z), new PickInfo(it.id, null, it.weaponType));
+                ResManager.Instance.CreateGameObject(lastItem.ScenePrefabPath, 
+                    new Vector3(pos.x, -0.8f, pos.z), new PickInfo(lastItem.id, null, lastItem.type));
                 //删除物体
                 GameObject.Destroy(lastItem.slotTrans.gameObject);
                 //从字典中移除
@@ -174,7 +175,7 @@ namespace Bag
             obj.transform.localPosition = Vector3.zero;
             //数据挂载
             GunItem item = new GunItem(obj.transform, equipSlotDic, it.name,it.id, it.weaponType, it.hurtNum, it.steadyNum, it.prefabPath);
-            Debug.Log("id:" + item.id);
+            Debug.Log("prefabPath:" + item.ScenePrefabPath);
             if (m_equipModel.gunItems.TryGetValue(slotNum, out GunItem element))
                 m_equipModel.gunItems[slotNum] = item;
             else
@@ -291,7 +292,8 @@ namespace Bag
             BaseItem it = (BaseItem)equipItem;
             if(it.type == ItemType.weapon_gun || it.type == ItemType.weapon_steel)
             {
-                DataBaseManager.GunDBItem gunItem = DataBaseManager.Instance.GunItemDic[it.gain];
+                DataBaseManager.GunDBItem gunItem = DataBaseManager.Instance.GunItemDic[it.id];
+                Debug.Log(gunItem.prefabPath);
                 AddGun(gunItem);
             }
             else

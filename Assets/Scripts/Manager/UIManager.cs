@@ -25,7 +25,7 @@ public class UIManager : MonoBehaviour
         //    m_bagController.AddItem(DataBaseManager.Instance.BagItemDic[i]);
         //}
 
-        m_bagController.AddGun(DataBaseManager.Instance.GunItemDic[0]);
+        //m_bagController.AddGun(DataBaseManager.Instance.GunItemDic[0]);
         //m_bagController.AddGun(DataBaseManager.Instance.GunItemDic[1]);
     }
 
@@ -44,9 +44,9 @@ public class UIManager : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.E))
         {
-            foreach (Bag.BagItemInfo it in m_bagController.m_bagModel.BagItemsDic.Values)
+            foreach (Bag.GunItem it in m_bagController.m_equipModel.gunItems.Values)
             {
-                Debug.Log("dicKey: " + it.ItemCtl.DicKey + "name:" + it.name);
+                Debug.Log("dicKey: " + it.name + "PrefabPath:" + it.ScenePrefabPath);
             }
 
         }
