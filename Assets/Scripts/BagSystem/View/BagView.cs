@@ -8,34 +8,72 @@ namespace Bag
     {
         public List<ViewSlot> m_slots;
 
-        private GameObject m_bagList;
+        public GameObject m_bagList;
         public GameObject DragSprite;
+        public GameObject m_bag;
 
         public int m_slotNum { get; }
+
+        public GameObject closeBtn;
         //构造函数
         public BagView()
         {
             m_slots = new List<ViewSlot>();
             m_slotNum = 0;
-            m_bagList = GameObject.Find("Canvas/Bag/BagList");
+            m_bag = GameObject.Find("Canvas/Bag");
+            //m_bagList = m_bag.transform.Find("BagList").gameObject;
+            m_bagList = m_bag.transform.Find("BagScrollView/Viewport/BagList").gameObject;
+
             DragSprite = ResManager.Instance.LoadPrefabFromRes("Prefab/DragSprite", true);
-            DragSprite.transform.SetParent(m_bagList.transform.parent);
+            DragSprite.transform.SetParent(m_bag.transform,false);
             DragSprite.transform.localPosition = Vector3.zero;
             DragSprite.SetActive(false);
+
+            //按键
+            Transform topRight = m_bag.transform.Find("TopRight");
+            closeBtn = topRight.Find("Close").gameObject;
+            
         }
         //初始化背包列表
         public void InitBagViewSlots(int SlotNum, string BagGridPath)
         {
-            for(int i = 0;i<SlotNum;i++)
+            SetBagListArea(SlotNum, 70, 3);
+            for (int i = 0;i<SlotNum;i++)
             {
                 GameObject obj = ResManager.Instance.LoadPrefabFromRes(BagGridPath, true);
                 obj.GetComponent<BagGrIdIns>().id = i;
                 //int InstanceID = obj.GetInstanceID();
                 ViewSlot st = new ViewSlot(obj,i);
                 m_slots.Add(st);
-                m_slots[i].slotObj.transform.SetParent(m_bagList.transform);
+                m_slots[i].slotObj.transform.SetParent(m_bagList.transform,false);
                 //Debug.Log("槽的id：" + m_slots[i].slotID);
             }
+        }
+        //初始化背包滚动列表时要修改滚动区域
+        private void SetBagListArea(int slotCount,int cellSizeY,int SpacingY)
+        {
+            m_bagList.GetComponent<RectTransform>().sizeDelta = new Vector2(0, slotCount * (cellSizeY+SpacingY));
+        }
+        //设置slot的bool值
+        public void SetSlotEmptyOrNot(int key, bool flag)
+        {
+            m_slots[key].isEmpty = flag;
+        }
+        //设置背包界面是可见
+        public void ShowBagUI()
+        {
+            m_bag.gameObject.SetActive(true);
+
+        }
+        //隐藏背包
+        public void HideBagUI()
+        {
+            m_bag.gameObject.SetActive(false);
+        }
+        //返回当前背包ui状态
+        public bool BagUIActive()
+        {
+            return m_bag.gameObject.activeSelf;
         }
         
     }

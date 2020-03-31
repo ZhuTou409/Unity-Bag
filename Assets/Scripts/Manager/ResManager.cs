@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using EventSys;
 
 public class ResManager : MonoBehaviour
 {
@@ -44,5 +45,29 @@ public class ResManager : MonoBehaviour
             }
         }
         return null;
+    }
+    /// <summary>
+    /// 往场景中添加实例
+    /// </summary>
+    /// <param name="Path"></param>
+    /// <param name="location"></param>
+    /// <param name="info"></param>
+    /// <returns></returns>
+    public bool CreateGameObject(string Path,Vector3 location, PickInfo info)
+    {
+        GameObject obj = LoadPrefabFromRes(Path,true);
+        EquipInfo thisInifo = obj.GetComponent<EquipInfo>();
+        if(thisInifo == null)
+        {
+            obj.AddComponent<EquipInfo>();
+        }
+        EquipInfo Info = obj.GetComponent<EquipInfo>();
+        Info.equipId = info.index;
+        Info.type = info.type;
+        return true;
+    }
+    public void ClearMemory()
+    {
+        Resources.UnloadUnusedAssets();
     }
 }

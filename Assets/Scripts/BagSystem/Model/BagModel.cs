@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Bag.Collect;
 namespace Bag
 {
     public class BagModel
@@ -38,27 +39,107 @@ namespace Bag
             }
             return null;
         }
+        //从bagItemDic中彻底删除指定物品
+        public bool RemoveItemFromDic(int key)
+        {
+            BagItemsDic.Remove(key);
+            return true;
+        }
     }
     public enum ItemType
     {
-        medicine,weapon,equip,dress,bullet,Nul
+        //五个装备的顺序不要弄错，与界面的顺序是对应的
+        equip_butt,
+        equip_magazine,
+        equip_handle,
+        equip_muzzle,
+        equip_scope,
+        dress,bullet,
+        medicine,
+        weapon_gun,
+        weapon_hangun,
+        weapon_steel,
+        Nul
     }
-
-    public class BagItemInfo
+    public enum ItemSize { equipSize, bagSize }
+    //item基础数据类
+    public class BaseItem
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public int Count { get; set; }
-        public ItemType Type { get; set; }
+        public int id { get; set; }
+        public string name { get; set; }
+        public ItemType type { get; set; }
+        public int count { get; set; }
+        public string imageName { get; set; }
+        public string ScenePrefabPath { get; set; }
+        public int gain;
+        public string discribe;
+        public BaseItem(int id, string name, int count,ItemType type,int gain,string discribe,string prefabPath)
+        {
+            this.id = id;
+            this.name = name;
+            this.type = type;
+            this.count = count;
+            this.gain = gain;
+            this.discribe = discribe;
+            imageName = null;
+            ScenePrefabPath = prefabPath;
+        }
+        public BaseItem(int id, string name, string imageName, int count,ItemType type, int gain,string discribe,string prefabPath)
+        {
+            this.id = id;
+            this.name = name;
+            this.type = type;
+            this.count = count;
+            this.gain = gain;
+            this.imageName = imageName;
+            this.discribe = discribe;
+            ScenePrefabPath = prefabPath;
+        }
+        //默认构造函数
+        public BaseItem()
+        {
+            this.id = -1;
+            this.count = 0;
+        }
+        public BaseItem(BaseItem it)
+        {
+            this.id = it.id;
+            this.name = it.name;
+            this.type = it.type;
+            this.count = it.count;
+            this.gain = it.gain;
+            this.discribe = it.discribe;
+            this.imageName = it.imageName;
+            this.ScenePrefabPath = it.ScenePrefabPath;
+        }
+        public BaseItem(EquipListItem it)
+        {
+            this.id = it.id;
+            this.name = it.name;
+            this.type = it.type;
+            this.count = it.count;
+            this.gain = it.gain;
+            this.discribe = it.discribe;
+            this.imageName = it.imageName;
+            this.ScenePrefabPath = it.ScenePrefabPath;
+        }
+        public virtual void ClearItem()
+        {
+            this.count = 0;
+            this.id = -1;
+            this.type = ItemType.Nul;
+            this.gain = 0;
+            this.discribe = null;
+            this.ScenePrefabPath = null;
+        }
+    }
+    public class BagItemInfo:BaseItem
+    {
         public GameObject Obj { get; set; }
         public Sprite Image { get; set; }
         public BagItemController ItemCtl { get; set; }
-        public BagItemInfo(int id, string name, Sprite sprite, int count, ItemType type, GameObject obj)
+        public BagItemInfo(int id, string name, Sprite sprite, int count, ItemType type, GameObject obj,string prefabPath):base(id,name,count,type,1,"", prefabPath)
         {
-            this.Id = id;
-            this.Name = name;
-            this.Count = count;
-            this.Type = type;
             this.Obj = obj;
             this.Image = sprite;
             ItemCtl = Obj.GetComponent<BagItemController>();
@@ -66,26 +147,36 @@ namespace Bag
                 Debug.LogError("创建BagItemInfo失败，传入GameObject没有BagItemController组件");
         }
         //拷贝构造函数
-        public BagItemInfo(BagItemInfo it)
+        public BagItemInfo(BagItemInfo it):base(it)
         {
-            this.Count = it.Count;
-            this.Id = it.Id;
-            this.Type = it.Type;
             this.Image = it.Image;
             this.Obj = it.Obj;
             this.ItemCtl = it.ItemCtl;
+            
         }
-        public void ClearItem()
+        public BagItemInfo(EquipListItem it,BagController ctl)
         {
-            this.Count = 0;
-            this.Id = -1;
-            this.Type = ItemType.Nul;
+            GameObject.Destroy(it.obj);
+            Obj = ResManager.Instance.LoadPrefabFromRes("Prefab/Bagitem", true);
+            Image = it.sprite;
+            ItemCtl = Obj.GetComponent<BagItemController>();
+            ItemCtl.SetController(ctl);
+            this.id = it.id;
+            this.name = it.name;
+            this.type = it.type;
+            this.count = it.count;
+            this.gain = it.gain;
+            this.discribe = it.discribe;
+        }
+        public override void ClearItem()
+        {
+            base.ClearItem();
             this.Image = null;
             this.Obj = null;
             this.ItemCtl = null;
         }
     }
-    //dataBase中存放武器装备的数据结构
+    //dataBase中存放装备的数据结构
     public class BagItem
     {
         public int Id { get; set; }
