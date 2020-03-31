@@ -15,36 +15,36 @@ public class DataBaseManager : MonoBehaviour
         //ResManager.Instance.LoadJasonFile("xxx");
         //暂时用直接定义代替
         BagItemDic = new Dictionary<int, Bag.BaseItem>();
-        Bag.BaseItem it_1 = new Bag.BaseItem(0, "5.56毫米子弹", "Sprit/bullet-5.56mm", 30,Bag.ItemType.bullet,4,"适合5.56mm口径自动步枪","Prefab/Model/bulletModel-5.56mm");
+        Bag.BaseItem it_1 = new Bag.BaseItem(0, "5.56毫米子弹", "Sprit/bullet-5.56mm", 30,Bag.ItemType.bullet,4,"适合5.56mm口径自动步枪","Prefab/Weapons/Modular/Bullet_556mm_Box");
         this.BagItemDic.Add(0, it_1);
-        Bag.BaseItem it_2 = new Bag.BaseItem(1, "垂直握把", "Sprit/chuizhiwoba", 1,Bag.ItemType.equip_handle, 5, "增加枪支稳定性", "Prefab/Model/chuizhiwobaModel");
+        Bag.BaseItem it_2 = new Bag.BaseItem(1, "垂直握把", "Sprit/chuizhiwoba", 1,Bag.ItemType.equip_handle, 5, "增加枪支稳定性", "Prefab/Weapons/Modular/Handle_CZ");
         this.BagItemDic.Add(1, it_2);
-        Bag.BaseItem it_3 = new Bag.BaseItem(2, "直角握把", "Sprit/zhijiaowoba", 1, Bag.ItemType.equip_handle, 6, "增加枪支稳定性", "Prefab/Model/zhijiaowobaModel");
+        Bag.BaseItem it_3 = new Bag.BaseItem(2, "直角握把", "Sprit/zhijiaowoba", 1, Bag.ItemType.equip_handle, 6, "增加枪支稳定性", "Prefab/Weapons/Modular/Handle_ZJ");
         this.BagItemDic.Add(2, it_3);
-        Bag.BaseItem it_4 = new Bag.BaseItem(3, "饮料", "Sprit/kele", 1, Bag.ItemType.medicine, 10, "少量回复生命", "Prefab/Model/keleModel");
+        Bag.BaseItem it_4 = new Bag.BaseItem(3, "饮料", "Sprit/kele", 1, Bag.ItemType.medicine, 10, "少量回复生命", "Prefab/Props/SM_Prop_Pills_01");
         this.BagItemDic.Add(3, it_4);
-        Bag.BaseItem it_5 = new Bag.BaseItem(4, "2倍 瞄准镜", "Sprit/2-beijing", 1, Bag.ItemType.equip_scope, 2, "放大两倍", "Prefab/Model/2-beijingModel");
+        Bag.BaseItem it_5 = new Bag.BaseItem(4, "2倍 瞄准镜", "Sprit/2-beijing", 1, Bag.ItemType.equip_scope, 2, "放大两倍", "Prefab/Weapons/Modular/Scope_2");
         this.BagItemDic.Add(4, it_5);
-        Bag.BaseItem it_6 = new Bag.BaseItem(5, "消音器", "Sprit/xiaoyinqi", 1, Bag.ItemType.equip_muzzle, 5, "减小射击噪音", "Prefab/Model/xiaoyinqiModel");
+        Bag.BaseItem it_6 = new Bag.BaseItem(5, "消音器", "Sprit/xiaoyinqi", 1, Bag.ItemType.equip_muzzle, 5, "减小射击噪音", "Prefab/Weapons/Modular/Silencer_01");
         this.BagItemDic.Add(5, it_6);
         //枪械的gain值作为映射，通过gain值获得GunItemDic中枪械对应的具体值
-        Bag.BaseItem it_7 = new Bag.BaseItem(6, "MK14突击步枪", "Sprit/M416", 1, Bag.ItemType.weapon_gun, 0, "使用5.56mm子弹", "Prefab/Model/M416");
+        Bag.BaseItem it_7 = new Bag.BaseItem(6, "MK14突击步枪", "Sprit/M416", 1, Bag.ItemType.weapon_gun, 0, "使用5.56mm子弹", "Prefab/Weapons/M416");
         this.BagItemDic.Add(6, it_7);
-        Bag.BaseItem it_8 = new Bag.BaseItem(7, "AK47突击步枪", "Sprit/AKM", 1, Bag.ItemType.weapon_gun, 1, "使用7.62mm子弹", "Prefab/Model/AKM");
+        Bag.BaseItem it_8 = new Bag.BaseItem(7, "AK47突击步枪", "Sprit/AKM", 1, Bag.ItemType.weapon_gun, 1, "使用7.62mm子弹", "Prefab/Weapons/AKM");
         this.BagItemDic.Add(7, it_8);
-        Bag.BaseItem it_9 = new Bag.BaseItem(8, "SCAR-L突击步枪", "Sprit/SCAR-L", 1, Bag.ItemType.weapon_gun, 2, "使用5.56mm子弹", "Prefab/Model/SCAR-L");
+        Bag.BaseItem it_9 = new Bag.BaseItem(8, "SCAR-L突击步枪", "Sprit/SCAR-L", 1, Bag.ItemType.weapon_gun, 2, "使用5.56mm子弹", "Prefab/Weapons/SCAR-L");
         this.BagItemDic.Add(8, it_9);
 
         GunItemDic = new Dictionary<int, GunDBItem>();
         //id，名称，子弹类型，子弹容量，伤害数值，稳定系数，配件类型
-        GunItemDic.Add(0, new GunDBItem(0, "MK14 突击步枪", "Sprit/Weapon/WeaponHud/ColtM4", "Prefab/Model/M416", BulletType.bullet_556mm, Bag.ItemType.weapon_gun, 30, 30, 0.8f,
+        GunItemDic.Add(0, new GunDBItem(0, "MK14 突击步枪", "Sprit/Weapon/WeaponHud/ColtM4", "Prefab/Weapons/M416", BulletType.bullet_556mm, Bag.ItemType.weapon_gun, 30, 30, 0.8f,
             new List<Bag.ItemType>() {  Bag.ItemType.equip_butt, Bag.ItemType.equip_magazine
             ,Bag.ItemType.equip_handle,Bag.ItemType.equip_muzzle,Bag.ItemType.equip_scope}));
 
-        GunItemDic.Add(1, new GunDBItem(1, "AK47 突击步枪", "Sprit/Weapon/WeaponHud/Ak47", "Prefab/Model/AKM", BulletType.bullet_762mm, Bag.ItemType.weapon_gun, 30, 40, 0.6f,
+        GunItemDic.Add(1, new GunDBItem(1, "AK47 突击步枪", "Sprit/Weapon/WeaponHud/Ak47", "Prefab/Weapons/AKM", BulletType.bullet_762mm, Bag.ItemType.weapon_gun, 30, 40, 0.6f,
     new List<Bag.ItemType>() {  Bag.ItemType.equip_magazine,Bag.ItemType.equip_muzzle,Bag.ItemType.equip_scope}));
 
-        GunItemDic.Add(2, new GunDBItem(2, "SCAR-L 突击步枪", "Sprit/Weapon/WeaponHud/SciFi", "Prefab/Model/SCAR-L", BulletType.bullet_556mm, Bag.ItemType.weapon_gun, 30, 30, 0.8f,
+        GunItemDic.Add(2, new GunDBItem(2, "SCAR-L 突击步枪", "Sprit/Weapon/WeaponHud/SciFi", "Prefab/Weapons/SCAR-L", BulletType.bullet_556mm, Bag.ItemType.weapon_gun, 30, 30, 0.8f,
     new List<Bag.ItemType>() {  Bag.ItemType.equip_magazine
             ,Bag.ItemType.equip_handle,Bag.ItemType.equip_muzzle,Bag.ItemType.equip_scope}));
     }

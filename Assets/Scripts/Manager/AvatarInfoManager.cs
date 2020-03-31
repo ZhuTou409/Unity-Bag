@@ -10,8 +10,8 @@ namespace Avatar.Value
 
         //可通过单例模式获得人物数值
 
-        public static AvatarInfoManager instance;
-        public AvatarInfoManager Instance
+        private static AvatarInfoManager instance;
+        public static AvatarInfoManager Instance
         {
             get
             {
@@ -27,13 +27,16 @@ namespace Avatar.Value
         private int blood  { get; set; }
         private BattleValue battleValue { get; set; }
         private GoodsValue goodsValue { get; set; }
-        public AvatarInfoManager()
+        private Transform Avatar { get; set; }
+        private Transform Scene { get; set; }
+        public AvatarInfoManager(Transform avatar,Transform scene)
         {
             battleValue = new BattleValue();
             goodsValue = new GoodsValue();
             speed = 1f;
             blood = 100;
-
+            Avatar = avatar;
+            Scene = scene;
             //完全依赖事件系统，不采取其他模式更改人物数值
             LiteEventManager.Instance.Register(AvatarValueKey.Attack, AttackValueChange);
             LiteEventManager.Instance.Register(AvatarValueKey.Blood, BloodValueChange);
@@ -41,6 +44,39 @@ namespace Avatar.Value
             LiteEventManager.Instance.Register(AvatarValueKey.Protect, ProtectValueChange);
             LiteEventManager.Instance.Register(AvatarValueKey.Speed, SpeedValueChange);
             LiteEventManager.Instance.Register(AvatarValueKey.Steady, SteadyValueChange);
+        }
+
+        public AvatarInfoManager()
+        {
+            battleValue = new BattleValue();
+            goodsValue = new GoodsValue();
+            speed = 1f;
+            blood = 100;
+            Scene = GameObject.Find("Scene").transform;
+            Avatar = GameObject.Find("Avatar").transform;
+            //完全依赖事件系统，不采取其他模式更改人物数值
+            LiteEventManager.Instance.Register(AvatarValueKey.Attack, AttackValueChange);
+            LiteEventManager.Instance.Register(AvatarValueKey.Blood, BloodValueChange);
+            LiteEventManager.Instance.Register(AvatarValueKey.Goods, GoodsValueChange);
+            LiteEventManager.Instance.Register(AvatarValueKey.Protect, ProtectValueChange);
+            LiteEventManager.Instance.Register(AvatarValueKey.Speed, SpeedValueChange);
+            LiteEventManager.Instance.Register(AvatarValueKey.Steady, SteadyValueChange);
+        }
+        /// <summary>
+        /// 获取主角当前位置
+        /// </summary>
+        /// <returns></returns>
+        public Transform GetAvatarTransform()
+        {
+            return Avatar;
+        }
+        /// <summary>
+        /// 返回场景根节点
+        /// </summary>
+        /// <returns></returns>
+        public Transform GetSceneTransform()
+        {
+            return Scene;
         }
         /// <summary>
         /// 攻击力改变,以下几个函数类似

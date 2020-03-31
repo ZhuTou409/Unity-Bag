@@ -20,10 +20,10 @@ public class UIManager : MonoBehaviour
         m_bagController = new BagController();
         m_collectController = new CollectController(canvas);
 
-        for(int i = 0;i<DataBaseManager.Instance.BagItemDic.Count-3;i++)
-        {
-            m_bagController.AddItem(DataBaseManager.Instance.BagItemDic[i]);
-        }
+        //for(int i = 0;i<DataBaseManager.Instance.BagItemDic.Count-3;i++)
+        //{
+        //    m_bagController.AddItem(DataBaseManager.Instance.BagItemDic[i]);
+        //}
 
         m_bagController.AddGun(DataBaseManager.Instance.GunItemDic[0]);
         //m_bagController.AddGun(DataBaseManager.Instance.GunItemDic[1]);

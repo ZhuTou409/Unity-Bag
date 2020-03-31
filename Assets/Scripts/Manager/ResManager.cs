@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using EventSys;
+using Avatar.Value;
 
 public class ResManager : MonoBehaviour
 {
@@ -56,6 +57,10 @@ public class ResManager : MonoBehaviour
     public bool CreateGameObject(string Path,Vector3 location, PickInfo info)
     {
         GameObject obj = LoadPrefabFromRes(Path,true);
+        //由于模型的问题，需要将rotation的沿z轴旋转90度
+        obj.transform.position = location;
+        obj.transform.SetParent(AvatarInfoManager.Instance.GetSceneTransform(),true);
+
         EquipInfo thisInifo = obj.GetComponent<EquipInfo>();
         if(thisInifo == null)
         {

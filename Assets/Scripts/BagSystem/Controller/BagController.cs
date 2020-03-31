@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using EventSys;
+using Avatar.Value;
 namespace Bag
 {
     public class BagController 
@@ -100,7 +101,9 @@ namespace Bag
                 Debug.Log("没有空位了");
                 GunItem lastItem = m_equipModel.gunItems[slotCount - 1];
                 //将物体放回场景中
-                ResManager.Instance.CreateGameObject(it.prefabPath, new Vector3(1, 1, 1.4f), new PickInfo(it.id, null, it.weaponType));
+                Vector3 pos = AvatarInfoManager.Instance.GetAvatarTransform().position;
+                ResManager.Instance.CreateGameObject(it.prefabPath, 
+                    new Vector3(pos.x, pos.y, pos.z), new PickInfo(it.id, null, it.weaponType));
                 //删除物体
                 GameObject.Destroy(lastItem.slotTrans.gameObject);
                 //从字典中移除
@@ -338,14 +341,17 @@ namespace Bag
                 {
                     GameObject.Destroy(it.Obj);
                     //加载prefab到地图中
-                    GameObject obj = ResManager.Instance.LoadPrefabFromRes(it.ScenePrefabPath, true);
-                    obj.transform.position = new Vector3(1, 0, 1);
-                    //设置prefab的基本属性
-                    EquipInfo info = obj.GetComponent<EquipInfo>();
-                    info.equipId = it.id;
-                    //正式从背包中清除装备
-                    it.ClearItem();
-                    m_bagModel.RemoveItemFromDic(dicKey);
+                    //GameObject obj = ResManager.Instance.LoadPrefabFromRes(it.ScenePrefabPath, true);
+                    //obj.transform.position = new Vector3(1, 0, 1);
+                    ////设置prefab的基本属性
+                    //EquipInfo info = obj.GetComponent<EquipInfo>();
+                    //info.equipId = it.id;
+                    ////正式从背包中清除装备
+                    //it.ClearItem();
+                    //m_bagModel.RemoveItemFromDic(dicKey);
+                    Vector3 pos = AvatarInfoManager.Instance.GetAvatarTransform().position;
+                    ResManager.Instance.CreateGameObject(it.ScenePrefabPath,
+                        new Vector3(pos.x, -0.8f, pos.z), new PickInfo(it.id, null, it.type));
                     //更新槽的flag
                     m_bagView.m_slots[dicKey].isEmpty = true;
                     //整理内存
@@ -366,7 +372,10 @@ namespace Bag
                         ////设置prefab的基本属性
                         //EquipInfo info = obj.GetComponent<EquipInfo>();
                         //info.equipId = it.id;
-                        ResManager.Instance.CreateGameObject(it.ScenePrefabPath, new Vector3(1, 1, 1.4f),new PickInfo(it.id,null,it.type));
+                        Vector3 pos = AvatarInfoManager.Instance.GetAvatarTransform().position;
+                        Debug.Log(pos);
+                        ResManager.Instance.CreateGameObject(it.ScenePrefabPath,
+                            new Vector3(-0.8f, pos.y, pos.z), new PickInfo(it.id,null,it.type));
                         //正式从背包中清除装备
                         it.ClearItem();
                         m_equipModel.RemoveEquip(gunIt, dicKey);
