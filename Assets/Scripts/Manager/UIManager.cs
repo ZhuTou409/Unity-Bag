@@ -44,9 +44,10 @@ public class UIManager : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.E))
         {
-            foreach (Bag.GunItem it in m_bagController.m_equipModel.gunItems.Values)
+            var enumerator = m_bagController.m_equipModel.gunItems.GetEnumerator();
+            while (enumerator.MoveNext())
             {
-                Debug.Log("dicKey: " + it.name + "PrefabPath:" + it.ScenePrefabPath);
+                Debug.Log("key: " + enumerator.Current.Key + " name: " + enumerator.Current.Value.name);
             }
 
         }

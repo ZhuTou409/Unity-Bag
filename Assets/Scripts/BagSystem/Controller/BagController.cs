@@ -115,6 +115,12 @@ namespace Bag
                     GunItem item = new GunItem(m_equipModel.gunItems[i]);
                     //Debug.Log(i+"  "+item.name);
                     m_equipModel.gunItems[i+1] = item;
+                    //更新枪支装备槽的parentId,parentId记录字典key值
+                    var enumerator = item.equipSlots.GetEnumerator();
+                    while(enumerator.MoveNext())
+                    {
+                        enumerator.Current.Value.info.parentId = i + 1;
+                    }
                     //重新挂载
                     item.slotTrans.SetParent(m_equipModel.gunSlots[i + 1].transform,false);
                     item.slotTrans.localPosition = Vector3.zero;

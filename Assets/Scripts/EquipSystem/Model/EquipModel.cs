@@ -42,24 +42,24 @@ namespace Bag
     public class EquipSlot
     {
         public Transform slotTrans { get; set; }
-        public int id { get; set; }
-        public int gunId { get; set; }
         public Text tx { get; set; }
         public ItemType slotType { get; set; }
+        public BagGrIdIns info;
         public EquipSlot(Transform slotTrans, int id ,int gunId,ItemType type)
         {
             this.slotTrans = slotTrans;
-            this.id = id;
             this.slotType = type;
-            this.gunId = gunId;
+            info = slotTrans.GetComponent<BagGrIdIns>();
+            info.id = id;
+            info.parentId = gunId;
         }
         //拷贝构造函数
         public EquipSlot(EquipSlot slot)
         {
             this.slotTrans = slot.slotTrans;
-            this.id = slot.id;
             this.slotType = slot.slotType;
-            this.gunId = slot.gunId;
+            this.info.id = slot.info.id;
+            this.info.parentId = slot.info.parentId;
         }
     }
 

@@ -70,10 +70,10 @@ public class AvatarControl : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log(Player.name + " 靠近物体: " + other.name);
+        //Debug.Log(Player.name + " 靠近物体: " + other.name);
         EquipInfo info = other.gameObject.GetComponent<EquipInfo>();
         int index = info.equipId;
-        Debug.Log(" equipid: " + index);
+        //Debug.Log(" equipid: " + index);
         Bag.ItemType type = info.type;
         SendBaseClass send = new PickInfo(index,other.gameObject,type);
         LiteEventManager.Instance.TriggerEvent(CollectKey.Trig, send);
@@ -82,7 +82,7 @@ public class AvatarControl : MonoBehaviour
     }
     private void OnTriggerExit(Collider other)
     {
-        Debug.Log(Player.name + " 远离物体: " + other.name);
+        //Debug.Log(Player.name + " 远离物体: " + other.name);
         int index = other.gameObject.GetInstanceID();
         LiteEventManager.Instance.TriggerEvent(CollectKey.Leave, index);
         //UIManager.Instance.m_collectController.RemoveItem(other.gameObject.GetComponent<EquipInfo>().equipId);

@@ -91,7 +91,7 @@ namespace Bag.Collect
             int count = m_collectModel.ListCount();
 
             m_collectView.ChangeListHeight(count);
-            Debug.Log("将要添加的item id:"+ index);
+            //Debug.Log("将要添加的item id:"+ index);
             //触发添加item到背包事件
             BaseItem it = new BaseItem(m_collectModel.SelectItem(id));
             if(it!=null)
