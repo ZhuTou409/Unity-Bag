@@ -137,6 +137,7 @@ namespace Bag
     {
         public GameObject Obj { get; set; }
         public Sprite Image { get; set; }
+        
         public BagItemController ItemCtl { get; set; }
         public BagItemInfo(int id, string name, Sprite sprite, int count, ItemType type, GameObject obj,string prefabPath):base(id,name,count,type,1,"", prefabPath)
         {

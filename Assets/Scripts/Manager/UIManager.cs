@@ -34,9 +34,9 @@ public class UIManager : MonoBehaviour
     {
         
         m_bagController.Update();
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKeyDown(KeyCode.R))
         {
-            var enumerator = m_bagController.m_equipModel.gunItems[0].equipItems.GetEnumerator();
+            var enumerator = m_bagController.m_equipModel.gunItems[1].equipItems.GetEnumerator();
             while (enumerator.MoveNext())
             {
                 Debug.Log("key: " + enumerator.Current.Key + " name: " + enumerator.Current.Value.name);

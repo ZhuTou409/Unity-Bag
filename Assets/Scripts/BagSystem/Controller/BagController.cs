@@ -105,6 +105,18 @@ namespace Bag
                 Vector3 pos = AvatarInfoManager.Instance.GetAvatarTransform().position;
                 ResManager.Instance.CreateGameObject(lastItem.ScenePrefabPath, 
                     new Vector3(pos.x, -0.8f, pos.z), new PickInfo(lastItem.id, null, lastItem.type));
+                //被丢弃的枪支内的装备放回背包中
+                var equipList = lastItem.equipItems.GetEnumerator();
+                while(equipList.MoveNext())
+                {
+                    Debug.Log("equipItems Keys:" + equipList.Current.Key);
+                    EquipItemToBagItem(lastItem, equipList.Current.Key,false);
+                }
+                //foreach(var key in lastItem.equipItems.Keys)
+                //{
+                //    Debug.Log("equipItems Keys:" + key);
+                //    EquipItemToBagItem(lastItem, key);
+                //}
                 //删除物体
                 GameObject.Destroy(lastItem.slotTrans.gameObject);
                 //从字典中移除
@@ -496,16 +508,31 @@ namespace Bag
                 //获取
                 if(m_equipModel.gunItems.TryGetValue(gunId,out GunItem gun))
                 {
+                    EquipItemToBagItem(gun, itemId);
                     //拷贝上一个槽的item数值
-                    BagItemInfo tempItem = new BagItemInfo(gun.equipItems[itemId]);
+                    //BagItemInfo tempItem = new BagItemInfo(gun.equipItems[itemId]);
                     //挂载item到新的槽(其实是将上一个槽的数值赋给新的槽)
-                    AddItem(tempItem, dropSlotId);
+                    //AddItem(tempItem, dropSlotId);
                     //清空上一个槽的数值
-                    m_equipModel.RemoveEquip(gun, itemId);
-                    //改变item形态
-                    //ChangeItemSize(tempItem, ItemSize.bagSize);
+                    //m_equipModel.RemoveEquip(gun, itemId);
                 }
             }
+        }
+
+        /// <summary>
+        /// 从装备栏挂载到背包栏
+        /// </summary>
+        /// <param name="gun"></param>
+        /// <param name="itemId">装备槽的id</param>
+        private void EquipItemToBagItem(GunItem gun,int itemId,bool flag = true)
+        {
+            //拷贝上一个槽的item数值
+            BagItemInfo tempItem = new BagItemInfo(gun.equipItems[itemId]);
+            //挂载item到新的槽(其实是将上一个槽的数值赋给新的槽)
+            AddItem(tempItem, 0);
+            //清空上一个槽的数值
+            if(flag == true)
+                m_equipModel.RemoveEquip(gun, itemId);
         }
 
         //交换item

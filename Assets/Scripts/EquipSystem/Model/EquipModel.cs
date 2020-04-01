@@ -75,7 +75,8 @@ namespace Bag
         public Dictionary<int,EquipSlot> equipSlots;
         //装备
         public Dictionary<int, BagItemInfo> equipItems;
-
+        //枪支的实例化物体(还未启用）
+        public Transform gunTrans { get; set; }
         //构造函数
         public GunItem(Transform slotTrans, Dictionary<int, EquipSlot> equipSlot,string name, 
             int id, ItemType type, int hurtNum,float steadyNum,string prefabPath):base(id,name,1,type,id,null,prefabPath)
