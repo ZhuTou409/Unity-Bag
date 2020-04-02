@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using EventSys;
+using Base;
 
 public class AvatarControl : MonoBehaviour
 {
@@ -74,7 +75,7 @@ public class AvatarControl : MonoBehaviour
         EquipInfo info = other.gameObject.GetComponent<EquipInfo>();
         int index = info.equipId;
         //Debug.Log(" equipid: " + index);
-        Bag.ItemType type = info.type;
+        EquipType type = info.type;
         SendBaseClass send = new PickInfo(index,other.gameObject,type);
         LiteEventManager.Instance.TriggerEvent(CollectKey.Trig, send);
         //UIManager.Instance.m_collectController.AddItemToList(index,DataBaseManager.Instance.BagItemDic[index], 

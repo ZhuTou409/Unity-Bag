@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using EventSys;
 using Avatar.Value;
+using Base;
 namespace Bag
 {
     public class BagController 
@@ -66,12 +67,12 @@ namespace Bag
             int i = 0;
             for (i = 0; i < weaponList.childCount - 2; i++)
             {
-                GunSlot slot = new GunSlot(weaponList.GetChild(i), ItemType.weapon_gun);
+                GunSlot slot = new GunSlot(weaponList.GetChild(i), EquipType.weapon_gun);
                 m_equipModel.gunSlots.Add(slot);
             }
             //初始化手枪槽和冷兵器槽
-            m_equipModel.hanGunSlot =  new GunSlot(weaponList.GetChild(i), ItemType.weapon_hangun);
-            m_equipModel.steelSlot = new GunSlot(weaponList.GetChild(i + 1), ItemType.weapon_steel);
+            m_equipModel.hanGunSlot =  new GunSlot(weaponList.GetChild(i), EquipType.weapon_hangun);
+            m_equipModel.steelSlot = new GunSlot(weaponList.GetChild(i + 1), EquipType.weapon_steel);
         }
         //添加装备，主武器
         public bool AddGun(DataBaseManager.GunDBItem it)
@@ -112,16 +113,11 @@ namespace Bag
                     Debug.Log("equipItems Keys:" + equipList.Current.Key);
                     EquipItemToBagItem(lastItem, equipList.Current.Key,false);
                 }
-                //foreach(var key in lastItem.equipItems.Keys)
-                //{
-                //    Debug.Log("equipItems Keys:" + key);
-                //    EquipItemToBagItem(lastItem, key);
-                //}
                 //删除物体
                 GameObject.Destroy(lastItem.slotTrans.gameObject);
                 //从字典中移除
                 m_equipModel.gunItems.Remove(slotCount);
-
+                //从后往前进行数据交换
                 for (int i = slotCount - 2; i >= 0; i--)
                 {
                     GunItem item = new GunItem(m_equipModel.gunItems[i]);
@@ -136,6 +132,9 @@ namespace Bag
                     //重新挂载
                     item.slotTrans.SetParent(m_equipModel.gunSlots[i + 1].transform,false);
                     item.slotTrans.localPosition = Vector3.zero;
+                    //更新人物枪支数值
+                    LiteEventManager.Instance.TriggerEvent(EquipType.weapon_gun,
+                        new ValueInfo<int, int, float, int>(i+1, item.hurtNum, item.steadyNum, item.capacity));
                 }
                 //将新加入的item挂载在第一个槽上
                 InitGunItem(it, 0);
@@ -163,11 +162,11 @@ namespace Bag
 
             Transform partList = obj.transform.GetChild(2);
             //初始化item对应的装备槽数据
-            List<ItemType> type = it.equipList;
+            List<EquipType> type = it.equipList;
             int equipListCount = type.Count;
             //装备槽位对照表
-            List<ItemType> allEquipType = new List<ItemType>() {ItemType.equip_butt,ItemType.equip_magazine,
-                    ItemType.equip_handle,ItemType.equip_muzzle,ItemType.equip_scope};
+            List<EquipType> allEquipType = new List<EquipType>() {EquipType.equip_butt,EquipType.equip_magazine,
+                    EquipType.equip_handle,EquipType.equip_muzzle,EquipType.equip_scope};
 
             Dictionary<int, EquipSlot> equipSlotDic = new Dictionary<int, EquipSlot>();
             //不同的枪所能挂载的配件不同,能显示的装备槽数量也不同
@@ -192,12 +191,16 @@ namespace Bag
             obj.transform.SetParent(m_equipModel.gunSlots[slotNum].transform,false);
             obj.transform.localPosition = Vector3.zero;
             //数据挂载
-            GunItem item = new GunItem(obj.transform, equipSlotDic, it.name,it.id, it.weaponType, it.hurtNum, it.steadyNum, it.prefabPath);
+            GunItem item = new GunItem(obj.transform, equipSlotDic, it.name,it.id, it.weaponType, it.hurtNum, it.steadyNum, it.prefabPath,it.bulletCap);
             Debug.Log("prefabPath:" + item.ScenePrefabPath);
             if (m_equipModel.gunItems.TryGetValue(slotNum, out GunItem element))
                 m_equipModel.gunItems[slotNum] = item;
             else
                 m_equipModel.gunItems.Add(slotNum, item);
+            //触发更新人物枪支数据
+            Debug.Log("槽数：" + slotNum);
+            LiteEventManager.Instance.TriggerEvent(EquipType.weapon_gun,
+                new ValueInfo<int,int,float,int>(slotNum, it.hurtNum, it.steadyNum, it.bulletCap));
             //挂载完成，将该槽设置为已挂载
             m_equipModel.gunSlots[slotNum].isEmpty = false;
         }
@@ -213,13 +216,21 @@ namespace Bag
             while (enumerator.MoveNext())
             {
                 if (m_bagModel.BagItemsDic[enumerator.Current.Key].id == id &&
-                    (it.type == ItemType.bullet || it.type ==ItemType.medicine))
+                    (it.type == EquipType.bullet_556 || it.type ==EquipType.medicine_s))
                 {
                     //只有药品和子弹的数量可以叠加
-                    if (it.type == ItemType.bullet || it.type == ItemType.medicine)
+                    if (it.type == EquipType.bullet_556)
                     {
                         enumerator.Current.Value.count += it.count;
                         ChangeItemNum(enumerator.Current.Value, enumerator.Current.Value.count);
+                        Debug.Log(it.count);
+                        ChangeBulletCount(EquipType.bullet_556, it.count);
+                        return true;
+                    }else if ( it.type == EquipType.medicine_s)
+                    {
+                        enumerator.Current.Value.count += it.count;
+                        ChangeItemNum(enumerator.Current.Value, enumerator.Current.Value.count);
+                        ChangeMedicineCount(EquipType.medicine_s, it.count);
                         return true;
                     }
                 }
@@ -256,7 +267,7 @@ namespace Bag
                 itemView.SetController(this);
                 itemView.SetDicKey(firstEmptySlot);
                 //实例化一个BagItemInfo
-                BagItemInfo itInfo = new BagItemInfo(id, it.name, sprite, it.count, it.type, obj,it.ScenePrefabPath);
+                BagItemInfo itInfo = new BagItemInfo(id, it.name, sprite, it.count, it.type, obj,it.ScenePrefabPath,it.gain);
                 //挂载item到空槽中
                 MountPrefabToSlot(itInfo, firstEmptySlot);
             }
@@ -273,10 +284,10 @@ namespace Bag
             while (enumerator.MoveNext())
             {
                 if (m_bagModel.BagItemsDic[enumerator.Current.Key].id == id &&
-                    (itInfo.type == ItemType.bullet || itInfo.type == ItemType.medicine))
+                    (itInfo.type == EquipType.bullet_556 || itInfo.type == EquipType.medicine_s))
                 {
                     //只有药品和子弹的数量可以叠加
-                    if (itInfo.type == ItemType.bullet || itInfo.type == ItemType.medicine)
+                    if (itInfo.type == EquipType.bullet_556 || itInfo.type == EquipType.medicine_s)
                     {
                         enumerator.Current.Value.count += itInfo.count;
                         ChangeItemNum(enumerator.Current.Value, enumerator.Current.Value.count);
@@ -306,9 +317,9 @@ namespace Bag
         {
             //将equiipItem类型转变为bagItemInfo
 
-            Debug.Log("开始挂载");
+            //Debug.Log("开始挂载");
             BaseItem it = (BaseItem)equipItem;
-            if(it.type == ItemType.weapon_gun || it.type == ItemType.weapon_steel)
+            if(it.type == EquipType.weapon_gun || it.type == EquipType.weapon_steel)
             {
                 DataBaseManager.GunDBItem gunItem = DataBaseManager.Instance.GunItemDic[it.id];
                 Debug.Log(gunItem.prefabPath);
@@ -396,6 +407,8 @@ namespace Bag
                         Debug.Log(pos);
                         ResManager.Instance.CreateGameObject(it.ScenePrefabPath,
                             new Vector3(-0.8f, pos.y, pos.z), new PickInfo(it.id,null,it.type));
+                        //更新人物数值
+                        ChangeGunInfo(gunId, it.type, -it.gain);
                         //正式从背包中清除装备
                         it.ClearItem();
                         m_equipModel.RemoveEquip(gunIt, dicKey);
@@ -440,7 +453,10 @@ namespace Bag
                     //改变位置,物理挂载
                     temp_It.Obj.transform.SetParent(gun.equipSlots[dropSlotId].slotTrans,false);
                     temp_It.Obj.transform.localPosition = Vector3.zero;
+                    Debug.Log("开始改变枪支数值");
                     ChangeItemSize(temp_It, ItemSize.equipSize);
+                    //改变枪支数值
+                    ChangeGunInfo(gunId, temp_It.type, temp_It.gain);
                     //清空上一个槽的数值
                     m_bagModel.BagItemsDic.Remove(dicKey);
                     m_bagView.m_slots[dicKey].isEmpty = true;
@@ -473,6 +489,10 @@ namespace Bag
                     lastItem.Obj.transform.localPosition = Vector3.zero;
                     dropGun.equipItems.Add(dropSlotId, lastItem);
                     lastItem.ItemCtl.DicKey = dropSlotId;
+                    //改变上一把枪支数值
+                    ChangeGunInfo(slotGunId, lastItem.type, -lastItem.gain);
+                    //改变下一把枪的数值
+                    ChangeGunInfo(dropGunId, dropGun.type, lastItem.gain);
                     //清空上一个槽的数值
                     gun.equipItems.Remove(parentId);
                 }
@@ -508,7 +528,11 @@ namespace Bag
                 //获取
                 if(m_equipModel.gunItems.TryGetValue(gunId,out GunItem gun))
                 {
+                    //更新枪械数值
+                    ChangeGunInfo(gunId, gun.equipItems[itemId].type, -gun.equipItems[itemId].gain);
+                    //执行挂载与解挂
                     EquipItemToBagItem(gun, itemId);
+
                     //拷贝上一个槽的item数值
                     //BagItemInfo tempItem = new BagItemInfo(gun.equipItems[itemId]);
                     //挂载item到新的槽(其实是将上一个槽的数值赋给新的槽)
@@ -532,7 +556,10 @@ namespace Bag
             AddItem(tempItem, 0);
             //清空上一个槽的数值
             if(flag == true)
+            {
                 m_equipModel.RemoveEquip(gun, itemId);
+            }
+                
         }
 
         //交换item
@@ -560,6 +587,8 @@ namespace Bag
                 int gunId = parentSlot.GetComponent<BagGrIdIns>().parentId;
                 //拷贝上一个槽的item数值
                 BagItemInfo drop_It = new BagItemInfo(m_equipModel.gunItems[gunId].equipItems[itemId]);
+                //更新上一个槽所属的枪械的数值
+                ChangeGunInfo(gunId, drop_It.type, -drop_It.gain);
                 //背包添加此item
                 AddItem(drop_It, -1);
                 //删除装备槽的item
@@ -655,6 +684,63 @@ namespace Bag
         public void OpenView(PointerEventData data)
         {
             m_bagView.ShowBagUI();
+        }
+        /// <summary>
+        /// 更改枪械的数值
+        /// </summary>
+        /// <param name="id">枪械id</param>
+        /// <param name="type">装备的类型</param>
+        /// <param name="gain">装备的数值</param>
+        public void ChangeGunInfo(int id, EquipType type, float gain)
+        {
+            GunItem it = m_equipModel.GetGunItem(id);
+            //容量
+            int capacity = 0;
+            //伤害数值
+            int hurtNum = 0;
+            //稳定性
+            float steady = 0f;
+            Debug.Log("gain: " + gain);
+            //改变枪支稳定性
+            if (type == EquipType.equip_butt || type == EquipType.equip_handle || type == EquipType.equip_muzzle)
+            {
+                steady = gain;
+                it.steadyNum += steady;
+            }
+            //改变枪支容量
+            else if (type == EquipType.equip_magazine)
+            {
+                capacity = (int)gain;
+                it.capacity += capacity;
+            }
+            
+            //顺序为：id,伤害数值，稳定数值，弹匣容量
+            LiteEventManager.Instance.TriggerEvent(AvatarValueKey.GunValue,
+                new ValueInfo<int, int,float,int>(id, hurtNum, steady, capacity));
+        }
+        /// <summary>
+        /// 改变子弹数量
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="type"></param>
+        /// <param name="gain"></param>
+        public void ChangeBulletCount(EquipType type, float gain)
+        {
+            if (type == EquipType.bullet_556)
+            {
+                LiteEventManager.Instance.TriggerEvent(AvatarValueKey.BulletsCount, new ArrayList[556, (int)gain]);
+            }
+            else if (type == EquipType.bullet_762)
+            {
+                LiteEventManager.Instance.TriggerEvent(AvatarValueKey.BulletsCount, new ArrayList[762, (int)gain]);
+            }
+        }
+        public void ChangeMedicineCount(EquipType type,float gain)
+        {
+            if (type == EquipType.medicine_s)
+            {
+                LiteEventManager.Instance.TriggerEvent(AvatarValueKey.BulletsCount, new ArrayList[0, (int)gain]);
+            }
         }
     }
 }

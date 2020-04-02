@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using EventSys;
+using Base;
 
 namespace Avatar.Value
 {
@@ -15,7 +16,7 @@ namespace Avatar.Value
         {
             get
             {
-                if(instance == null)
+                if (instance == null)
                 {
                     instance = new AvatarInfoManager();
                 }
@@ -24,44 +25,73 @@ namespace Avatar.Value
         }
 
         private float speed { get; set; }
-        private int blood  { get; set; }
-        private BattleValue battleValue { get; set; }
+        private int blood { get; set; }
+        //主武器列表
+        private List<BattleValue> battleValue { get; set; }
+        int MaxGun = 2;
+        //各类型子弹数量
+        private Dictionary<int, int> bulletCount { get; set; }
+        //各类型急救包
+        private Dictionary<int, int> medicineCount { get; set; }
+
         private GoodsValue goodsValue { get; set; }
         private Transform Avatar { get; set; }
         private Transform Scene { get; set; }
-        public AvatarInfoManager(Transform avatar,Transform scene)
-        {
-            battleValue = new BattleValue();
-            goodsValue = new GoodsValue();
-            speed = 1f;
-            blood = 100;
-            Avatar = avatar;
-            Scene = scene;
-            //完全依赖事件系统，不采取其他模式更改人物数值
-            LiteEventManager.Instance.Register(AvatarValueKey.Attack, AttackValueChange);
-            LiteEventManager.Instance.Register(AvatarValueKey.Blood, BloodValueChange);
-            LiteEventManager.Instance.Register(AvatarValueKey.Goods, GoodsValueChange);
-            LiteEventManager.Instance.Register(AvatarValueKey.Protect, ProtectValueChange);
-            LiteEventManager.Instance.Register(AvatarValueKey.Speed, SpeedValueChange);
-            LiteEventManager.Instance.Register(AvatarValueKey.Steady, SteadyValueChange);
-        }
-
         public AvatarInfoManager()
         {
-            battleValue = new BattleValue();
+            Debug.Log("初始化avatarInfoManager");
+            battleValue = new List<BattleValue>();
             goodsValue = new GoodsValue();
+            bulletCount = new Dictionary<int, int>();
+            //总共两种子弹
+            bulletCount.Add(556, 0);
+            bulletCount.Add(762, 0);
+            //两种药品
+            medicineCount = new Dictionary<int, int>();
+            medicineCount.Add(0, 0);
+            medicineCount.Add(1, 0);
+            //初始化数值
             speed = 1f;
             blood = 100;
-            Scene = GameObject.Find("Scene").transform;
             Avatar = GameObject.Find("Avatar").transform;
+            Scene = GameObject.Find("Scene").transform;
             //完全依赖事件系统，不采取其他模式更改人物数值
-            LiteEventManager.Instance.Register(AvatarValueKey.Attack, AttackValueChange);
+            LiteEventManager.Instance.Register(AvatarValueKey.GunValue, AttackValueChange);
             LiteEventManager.Instance.Register(AvatarValueKey.Blood, BloodValueChange);
-            LiteEventManager.Instance.Register(AvatarValueKey.Goods, GoodsValueChange);
+           
             LiteEventManager.Instance.Register(AvatarValueKey.Protect, ProtectValueChange);
             LiteEventManager.Instance.Register(AvatarValueKey.Speed, SpeedValueChange);
-            LiteEventManager.Instance.Register(AvatarValueKey.Steady, SteadyValueChange);
+
+            LiteEventManager.Instance.Register(EquipType.bullet_556, BulletValueChange);
+            LiteEventManager.Instance.Register(EquipType.bullet_762, BulletValueChange);
+
+            LiteEventManager.Instance.Register(EquipType.medicine_s, MedicineValueChange);
+            LiteEventManager.Instance.Register(EquipType.medicine_k, MedicineValueChange);
+
+            LiteEventManager.Instance.Register(EquipType.weapon_gun,AddGun);
+
         }
+
+        //public AvatarInfoManager()
+        //{
+        //    battleValue = new List<BattleValue>();
+        //    goodsValue = new GoodsValue();
+        //    bulletCount = new Dictionary<int, int>();
+        //    //总共三种子弹
+        //    bulletCount.Add(556, 0);
+        //    bulletCount.Add(762, 0);
+        //    speed = 1f;
+        //    blood = 100;
+        //    Scene = GameObject.Find("Scene").transform;
+        //    Avatar = GameObject.Find("Avatar").transform;
+        //    //完全依赖事件系统，不采取其他模式更改人物数值
+        //    LiteEventManager.Instance.Register(AvatarValueKey.GunValue, AttackValueChange);
+        //    LiteEventManager.Instance.Register(AvatarValueKey.Blood, BloodValueChange);
+        //    LiteEventManager.Instance.Register(AvatarValueKey.Medicine, MedicineValueChange);
+        //    LiteEventManager.Instance.Register(AvatarValueKey.Protect, ProtectValueChange);
+        //    LiteEventManager.Instance.Register(AvatarValueKey.Speed, SpeedValueChange);
+        //    LiteEventManager.Instance.Register(AvatarValueKey.BulletsCount, BulletValueChange);
+        //}
         /// <summary>
         /// 获取主角当前位置
         /// </summary>
@@ -79,12 +109,75 @@ namespace Avatar.Value
             return Scene;
         }
         /// <summary>
-        /// 攻击力改变,以下几个函数类似
+        /// 返回某种类型的子弹，目前有三种类型：556,762
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public int GetBulletCount(int index)
+        {
+            if(bulletCount.TryGetValue(index,out int it))
+            {
+                return it;
+            }
+            return -1;
+        }
+        /// <summary>
+        /// 获取某种药品数量，目前两种类型，0，1
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public int GetMedicingCount(int index)
+        {
+            if(medicineCount.TryGetValue(index,out int it))
+            {
+                return it;
+            }
+            return -1;
+        }
+        /// <summary>
+        /// 获取某个枪支的攻击力
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public int GetGunAttackVaalue(int index)
+        {
+            if(battleValue.Count>index)
+            {
+                return battleValue[index].attackValue;
+            }
+            return -1;
+        }
+        /// <summary>
+        /// 获取某枪支的稳定性
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public float GetGunSteadyValue(int index)
+        {
+            if (battleValue.Count > index)
+            {
+                return battleValue[index].steadyValue;
+            }
+            return -1;
+        }
+        /// <summary>
+        /// 枪械数值改变,以下几个函数类似
         /// </summary>
         /// <param name="obj"></param>
         public void AttackValueChange(object obj)
         {
-            battleValue.attackValue += (int)obj;
+            ValueInfo<int, int,float,int> temp = new ValueInfo<int, int, float, int>();
+            //规定传入的参数依次为为枪的id，伤害，稳定，弹匣容量
+            temp = (ValueInfo<int, int, float, int>)obj;
+            int index = temp.param_1;
+            //伤害
+            battleValue[index].attackValue += temp.param_2;
+            //稳定
+            battleValue[index].steadyValue += temp.param_3;
+            //弹匣容量
+            battleValue[index].capacity += temp.param_4;
+            Debug.Log("攻击力：" + battleValue[index].attackValue + "稳定性：" + battleValue[index].steadyValue
+                + "容量：" + battleValue[index].capacity);
         }
 
         public void BloodValueChange(object obj)
@@ -103,37 +196,80 @@ namespace Avatar.Value
 
         public void ProtectValueChange(object obj)
         {
-            battleValue.protectValue += (int)obj;
+
         }
 
-        public void SteadyValueChange(object obj)
+        public void BulletValueChange(object obj)
         {
-            battleValue.steadyValue += (int)obj;
+            object[] temp = (object[])obj;
+            //对于子弹数量来说，不存在交换，只是单纯的增加与减少
+            //子弹类型，子弹数量
+            bulletCount[(int)temp[0]] += (int)temp[1];
         }
 
-        public void GoodsValueChange(object obj)
+        public void MedicineValueChange(object obj)
         {
-            goodsValue = (GoodsValue)obj;
+            object[] temp = (object[])obj;
+            //对于子弹数量来说，不存在交换，只是单纯的增加与减少
+            //子弹类型，子弹数量
+            bulletCount[(int)temp[0]] += (int)temp[1];
+        }
+        /// <summary>
+        /// 添加枪支
+        /// </summary>
+        /// <param name="obj"></param>
+        public void AddGun(object obj)
+        {
+            Debug.Log("添加枪支");
+            ValueInfo<int, int,float,int> temp = new ValueInfo<int, int,float,int>();
+            temp = (ValueInfo<int, int, float, int>)obj;
+            int index = temp.param_1;
+            
+            if (index > battleValue.Count && index <= MaxGun)
+            {
+                BattleValue bt = new BattleValue(temp.param_2, temp.param_3, temp.param_4);
+                battleValue.Add(bt);
+            }else if(index< battleValue.Count)
+            {
+                BattleValue bt = new BattleValue(temp.param_2, temp.param_3, temp.param_4);
+                battleValue[index] = bt;
+            }
+            else if(index == battleValue.Count)
+            {
+                BattleValue bt = new BattleValue(temp.param_2, temp.param_3, temp.param_4);
+                battleValue.Add(bt);
+            }
+            Debug.Log("攻击力：" + battleValue[index].attackValue
+                + "稳定性：" + battleValue[index].steadyValue + "容量：" + battleValue[index].capacity);
+        }
+        public void Test(object obj)
+        {
+            ValueInfo<int, int, int, int> temp = new ValueInfo<int, int, int, int>();
+            //规定传入的参数依次为为枪的id，伤害，稳定，弹匣容量
+            temp = (ValueInfo<int, int, int, int>)obj;
+            Debug.Log(temp.param_1);
         }
     }
     public class BattleValue
     {
+        
         public int attackValue { get; set; }
-        public int protectValue { get; set; }
+        //弹匣容量
+        public int capacity{ get; set; }
         //枪口稳定系数
         public float steadyValue { get; set; }
 
-        public BattleValue(int attack,int protect,float steady)
+        public BattleValue(int attack,float steady,int capacity)
         {
             attackValue = attack;
-            protectValue = protect;
+            this.capacity = capacity;
             steadyValue = steady;
         }
         //初始值
         public BattleValue()
         {
             attackValue = 5;
-            protectValue = 0;
+            capacity = 0;
             steadyValue = 1;
         }
     }

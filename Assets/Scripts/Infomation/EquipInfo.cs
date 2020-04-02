@@ -1,15 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Base;
 
 public class EquipInfo : MonoBehaviour
 {
     //装备类型
-    public Bag.ItemType type;
+    public EquipType type;
     //装备id
     public int equipId;
     public GameObject obj;
-    public EquipInfo(int id, Bag.ItemType T)
+    public EquipInfo(int id, EquipType T)
     {
         type = T;
         equipId = id;

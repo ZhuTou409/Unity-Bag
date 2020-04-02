@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Base;
 namespace Bag
 {
     public class EquipModel
@@ -37,15 +38,29 @@ namespace Bag
             }
             return false;
         }
+        /// <summary>
+        /// 通过id获取某个主武器
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public GunItem GetGunItem(int id)
+        {
+            if(gunItems.TryGetValue(id,out GunItem it))
+            {
+                return it;
+            }
+            return null;
+        }
+
     }
 
     public class EquipSlot
     {
         public Transform slotTrans { get; set; }
         public Text tx { get; set; }
-        public ItemType slotType { get; set; }
+        public EquipType slotType { get; set; }
         public BagGrIdIns info;
-        public EquipSlot(Transform slotTrans, int id ,int gunId,ItemType type)
+        public EquipSlot(Transform slotTrans, int id ,int gunId,EquipType type)
         {
             this.slotTrans = slotTrans;
             this.slotType = type;
@@ -71,6 +86,7 @@ namespace Bag
         //数值
         public int hurtNum;
         public float steadyNum;
+        public int capacity;
         //装备槽
         public Dictionary<int,EquipSlot> equipSlots;
         //装备
@@ -79,24 +95,27 @@ namespace Bag
         public Transform gunTrans { get; set; }
         //构造函数
         public GunItem(Transform slotTrans, Dictionary<int, EquipSlot> equipSlot,string name, 
-            int id, ItemType type, int hurtNum,float steadyNum,string prefabPath):base(id,name,1,type,id,null,prefabPath)
+            int id, EquipType type, int hurtNum,float steadyNum,string prefabPath, int capacity):base(id,name,1,type,id,null,prefabPath)
         {
             this.slotTrans = slotTrans;
             this.hurtNum = hurtNum;
             this.steadyNum = steadyNum;
             this.equipSlots = equipSlot;
+            this.capacity = capacity;
             equipItems = new Dictionary<int, BagItemInfo>();
         }
         public GunItem()
         {
             id = -1;
         }
-        public GunItem(BaseItem it,Transform slotTrans, Dictionary<int, EquipSlot> equipSlot, int hurtNum, float steadyNum):base(it)
+        public GunItem(BaseItem it,Transform slotTrans, Dictionary<int, EquipSlot> equipSlot, 
+            int hurtNum, float steadyNum, int capacity) :base(it)
         {
             this.slotTrans = slotTrans;
             this.hurtNum = hurtNum;
             this.steadyNum = steadyNum;
             this.equipSlots = equipSlot;
+            this.capacity = capacity;
             equipItems = new Dictionary<int, BagItemInfo>();
         }
         //拷贝构造函数
@@ -109,6 +128,7 @@ namespace Bag
             this.steadyNum = it.steadyNum;
             this.name = it.name;
             this.ScenePrefabPath = it.ScenePrefabPath;
+            this.capacity = it.capacity;
             //深拷贝
             equipSlots = new Dictionary<int, EquipSlot>();
             List<int> keyList = new List<int>();
@@ -130,8 +150,8 @@ namespace Bag
     {
         public Transform transform;
         public bool isEmpty;
-        public ItemType gunType;
-        public GunSlot(Transform trans, ItemType type)
+        public EquipType gunType;
+        public GunSlot(Transform trans, EquipType type)
         {
             this.transform = trans;
             isEmpty = true;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Bag;
 using Bag.Collect;
+using Avatar.Value;
 
 public class UIManager : MonoBehaviour
 {
@@ -50,6 +51,16 @@ public class UIManager : MonoBehaviour
                 Debug.Log("key: " + enumerator.Current.Key + " name: " + enumerator.Current.Value.name);
             }
 
+        }
+        //实验
+        else if(Input.GetKeyDown(KeyCode.T))
+        {
+            Debug.Log("当前556子弹数量：" + AvatarInfoManager.Instance.GetBulletCount(556));
+            Debug.Log("当前762子弹数量：" + AvatarInfoManager.Instance.GetBulletCount(762));
+            Debug.Log("枪支1 攻击力：" + AvatarInfoManager.Instance.GetGunAttackVaalue(0));
+            Debug.Log("枪支1 稳定性：" + AvatarInfoManager.Instance.GetGunSteadyValue(0));
+            Debug.Log("枪支2 攻击力：" + AvatarInfoManager.Instance.GetGunAttackVaalue(1));
+            Debug.Log("枪支2 稳定性：" + AvatarInfoManager.Instance.GetGunSteadyValue(1));
         }
     }
 }

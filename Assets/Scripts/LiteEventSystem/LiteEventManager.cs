@@ -65,9 +65,18 @@ namespace EventSys
         public void TriggerEvent(Enum eventKey,object trigger)
         {
             EventMode tempEvent;
+
             if(m_eventDictionary.TryGetValue(eventKey,out tempEvent))
             {
+                //Debug.Log("触发前:" + eventKey);
+                //var enumra = m_eventDictionary.GetEnumerator();
+                //while(enumra.MoveNext())
+                //{
+                //    Debug.Log(enumra.Current.Key + " " + enumra.Current.Value.GetHashCode());
+                //}
+                
                 tempEvent.Invoke(trigger);
+                //Debug.Log("触发后:" + eventKey);
             }
         }
     }

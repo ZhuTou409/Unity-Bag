@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Bag.Collect;
+using Base;
 namespace Bag
 {
     public class BagModel
@@ -46,34 +47,36 @@ namespace Bag
             return true;
         }
     }
-    public enum ItemType
-    {
-        //五个装备的顺序不要弄错，与界面的顺序是对应的
-        equip_butt,
-        equip_magazine,
-        equip_handle,
-        equip_muzzle,
-        equip_scope,
-        dress,bullet,
-        medicine,
-        weapon_gun,
-        weapon_hangun,
-        weapon_steel,
-        Nul
-    }
+    //public enum EquipType
+    //{
+    //    //五个装备的顺序不要弄错，与界面的顺序是对应的
+    //    equip_butt,
+    //    equip_magazine,
+    //    equip_handle,
+    //    equip_muzzle,
+    //    equip_scope,
+    //    dress,
+    //    bullet_556,
+    //    bullet_762,
+    //    medicine,
+    //    weapon_gun,
+    //    weapon_hangun,
+    //    weapon_steel,
+    //    Nul
+    //}
     public enum ItemSize { equipSize, bagSize }
     //item基础数据类
     public class BaseItem
     {
         public int id { get; set; }
         public string name { get; set; }
-        public ItemType type { get; set; }
+        public EquipType type { get; set; }
         public int count { get; set; }
         public string imageName { get; set; }
         public string ScenePrefabPath { get; set; }
-        public int gain;
+        public float gain;
         public string discribe;
-        public BaseItem(int id, string name, int count,ItemType type,int gain,string discribe,string prefabPath)
+        public BaseItem(int id, string name, int count,EquipType type,float gain,string discribe,string prefabPath)
         {
             this.id = id;
             this.name = name;
@@ -84,7 +87,7 @@ namespace Bag
             imageName = null;
             ScenePrefabPath = prefabPath;
         }
-        public BaseItem(int id, string name, string imageName, int count,ItemType type, int gain,string discribe,string prefabPath)
+        public BaseItem(int id, string name, string imageName, int count,EquipType type, float gain,string discribe,string prefabPath)
         {
             this.id = id;
             this.name = name;
@@ -127,7 +130,7 @@ namespace Bag
         {
             this.count = 0;
             this.id = -1;
-            this.type = ItemType.Nul;
+            this.type = EquipType.Nul;
             this.gain = 0;
             this.discribe = null;
             this.ScenePrefabPath = null;
@@ -139,7 +142,7 @@ namespace Bag
         public Sprite Image { get; set; }
         
         public BagItemController ItemCtl { get; set; }
-        public BagItemInfo(int id, string name, Sprite sprite, int count, ItemType type, GameObject obj,string prefabPath):base(id,name,count,type,1,"", prefabPath)
+        public BagItemInfo(int id, string name, Sprite sprite, int count, EquipType type, GameObject obj,string prefabPath,float gain):base(id,name,count,type,gain,"", prefabPath)
         {
             this.Obj = obj;
             this.Image = sprite;
@@ -184,10 +187,10 @@ namespace Bag
         public string Name { get; set; }
         public string ImageName { get; set; }
         public int Count { get; set; }
-        public ItemType Type {get;set; }
+        public EquipType Type {get;set; }
         //public ViewItem viewItem { get; set; }
         //构造函数
-        public  BagItem(int Id, string Name,string ImagePath, int Count, ItemType type)
+        public  BagItem(int Id, string Name,string ImagePath, int Count, EquipType type)
         {
             this.Id = Id;
             this.Name = Name;

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Base;
 
 namespace Bag.Collect
 {
@@ -62,7 +63,7 @@ namespace Bag.Collect
         public Sprite sprite;
         //存储场景中的装备物体
         public GameObject SceneObj;
-        public EquipListItem(int id, string name, int count, ItemType type,int gain,string discribe,GameObject obj,GameObject sceneObject,string prefabPath)
+        public EquipListItem(int id, string name, int count, EquipType type,int gain,string discribe,GameObject obj,GameObject sceneObject,string prefabPath)
             :base(id,name,count,type,gain,discribe,prefabPath)
         {
             this.obj = obj;
